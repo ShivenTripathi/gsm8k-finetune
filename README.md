@@ -4,7 +4,9 @@ I trained small language models for [Overmind’s Small Model, Big Maths challen
 
 The checkpoint behind that score gets **1,204 of 1,319** test questions right (**91.28%**). The protocol is EleutherAI `lm-eval`, task `gsm8k`, 5-shot, greedy decoding, one answer per question, at most 1,024 generated tokens, with the answer written as `#### N`. I chose the checkpoint on a 500-question validation holdout before that test. The test set was scored twice in the whole project, on two different checkpoints, and never used to pick a winner.
 
-![Final leaderboard, top 10 of 28](figures/leaderboard.png)
+One billion parameters costs one accuracy point, so a smaller model only wins if it gives up fewer points of accuracy than it gets back. Across the models I trained, Qwen3.5-4B is the one that wins that trade.
+
+![Best validation score of each base model](figures/model_scale.png)
 
 Two ways to count the same 1,204 answers:
 
@@ -54,11 +56,7 @@ The full table, with job ids, step counts, and flexible-extract, is in [docs/exp
 
 ## Smaller models do not win on the discount
 
-One billion parameters costs one accuracy point. A smaller model only wins if it gives up fewer points of accuracy than it gets back from the penalty.
-
-![Best validation score of each base model](figures/model_scale.png)
-
-Qwen3.5-9B reached 92.0% validation and scored 82.3, because 9.7B costs more than the extra correct answers return. Llama-3.2-3B reached 80.0% and scored 76.8. Qwen3.5-2B topped out at 65.6% even at its best learning rate, and flexible-extract was 68.6%, so the missing points were not hiding in the answer format. LFM2.5-1.2B was the best small model I measured, 75.2% and a score of 74.0, still well behind the 4B.
+Qwen3.5-9B reached 92.0% validation and scored 82.3, because 9.7B costs more than the extra correct answers return. Llama-3.2-3B reached 80.0% and scored 76.8. Qwen3.5-2B topped out at 65.6% even at its best learning rate, and flexible-extract was 68.6%, so the missing points were not hiding in the answer format. LFM2.5-1.2B was the best small model I measured, 75.2% and a score of 74.0, still well behind the 4B. The comparison is the first figure above.
 
 ## Where the submitted model is wrong
 
@@ -92,3 +90,7 @@ uv run --with matplotlib python scripts/plot_results.py
 The script contains the measured numbers and writes `figures/`. Weights, the GSM8K files, and the raw sample logs are not in this repository. The contest forbids training on anything but the official GSM8K train split, and it forbids starting from a checkpoint that was already fine-tuned on GSM8K.
 
 GSM8K is [Cobbe et al., 2021](https://arxiv.org/abs/2110.14168). Evaluation is [lm-eval](https://github.com/EleutherAI/lm-evaluation-harness) 0.4.13. The base model is [Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B). LoRA is [Hu et al., 2021](https://arxiv.org/abs/2106.09685).
+
+## Where it finished
+
+![Final leaderboard, top 10 of 28](figures/leaderboard.png)
